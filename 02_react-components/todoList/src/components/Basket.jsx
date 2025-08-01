@@ -1,3 +1,9 @@
-export default function Basket({ itemName, itemId }) {
-  return <li key={itemId}>{itemName}</li>;
+export default function Basket({ itemName, itemId, onDelete }) {
+  return (
+    <li>
+      {itemName}
+
+      <button onClick={() => onDelete(itemId)}>Delete</button>
+    </li>
+  );
 }

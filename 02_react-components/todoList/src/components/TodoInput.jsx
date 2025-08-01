@@ -23,6 +23,11 @@ export default function TodoInput() {
   useEffect(() => {
     console.log(shopList);
   }, [shopList]);
+
+  function handleDelete(todoId) {
+    const updateItem = shopList.filter((item) => item.itemId !== todoId);
+    setShopList(updateItem);
+  }
   return (
     <div>
       <h1>Shopping List</h1>
@@ -39,7 +44,12 @@ export default function TodoInput() {
 
       <ul>
         {shopList.map((item) => (
-          <Basket itemName={item.itemName} itemId={item.itemId} />
+          <Basket
+            key={item.itemId}
+            itemName={item.itemName}
+            onDelete={handleDelete}
+            itemId={item.itemId}
+          />
         ))}
       </ul>
     </div>
