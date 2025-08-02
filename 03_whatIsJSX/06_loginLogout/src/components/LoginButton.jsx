@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const LoginButton = () => {
   const [isLogin, setIsLogin] = useState(false);
-  const color = isLogin ? "green" : "red";
+  const color = isLogin ? "green" : "white";
   document.querySelector("body").style.backgroundColor = color;
 
   function handleLogin() {
