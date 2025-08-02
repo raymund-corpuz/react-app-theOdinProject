@@ -1,20 +1,7 @@
 import Avatar from "./Avatar";
+import { persons } from "./data.js";
 
 export default function Gallery() {
-  const persons = [
-    {
-      name: "Maria Sklodowska",
-      profession: "Physicist and Chemist",
-      awards: "Nobel Chemist",
-      image: "https://i.pravatar.cc/100",
-    },
-    {
-      name: "Katsuo Saruhashi",
-      profession: "Physicist and Chemist",
-      awards: "Nobel Chemist",
-      image: "https://i.pravatar.cc/100",
-    },
-  ];
   return (
     <div>
       <h1>Notable Scientists</h1>
