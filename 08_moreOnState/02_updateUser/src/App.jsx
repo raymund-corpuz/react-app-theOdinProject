@@ -9,7 +9,7 @@ const App = () => {
     city: "",
   });
   const [userCollection, setUserCollection] = useState([]);
-  const [isEdit, setIsEdit] = useState("Submit");
+  const [editingId, setEditingId] = useState(null);
 
   function handleUser(e) {
     const { name, value } = e.target;
@@ -40,9 +40,8 @@ const App = () => {
     const selectedUser = userCollection.find((user) => user.id === id);
     if (selectedUser) {
       setUser({ username: selectedUser.username, city: selectedUser.city });
-      setIsEdit((prevStatus) => !prevStatus);
+      setEditingId(id);
     }
-    handleDelete(id);
   }
 
   function handleSave() {}
@@ -55,9 +54,7 @@ const App = () => {
         userCollection={userCollection}
         onUser={handleUser}
         onSubmit={handleSubmit}
-        isEdit={isEdit}
         onSave={handleSave}
-        setIsEdit={setIsEdit}
       />
       {userCollection.map((user) => (
         <UserList
