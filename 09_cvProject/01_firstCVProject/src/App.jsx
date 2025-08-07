@@ -1,11 +1,11 @@
 import React from "react";
-import CvForm from "./components/CvForm";
 
+import NewCvForm from "./components/NewCvForm";
 
 const App = () => {
   return (
     <div>
-      <CvForm />
+      <NewCvForm />
     </div>
   );
 };
