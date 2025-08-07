@@ -44,6 +44,10 @@ const CvBuilder = () => {
     setUser(initialState); //Reset to initial
   }
 
+  function handleEdit() {}
+
+  function handleDelete(id) {}
+
   useEffect(() => {
     console.log("User: ", user);
     console.log("User Collection :", userCollection);
@@ -56,6 +60,7 @@ const CvBuilder = () => {
         onChange={handleChange}
         onSubmit={handleSubmit}
         user={user}
+        onDelete={handleDelete}
       />
       {Object.entries(user).map(([key, value]) => (
         <CvOutput key={key} name={key} value={value} />
