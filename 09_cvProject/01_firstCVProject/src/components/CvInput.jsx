@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 
-const CvInput = ({ data, onChange }) => {
+const CvInput = ({ data, onChange, user }) => {
   return (
     <div className="mb-1  ">
       <label htmlFor="" className={data.label}>

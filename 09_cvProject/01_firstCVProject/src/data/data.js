@@ -38,20 +38,7 @@ const data = [
         input: "form-control",
         type: "text",
       },
-      {
-        name: "linkedIn",
-        title: "LinkedIn URL",
-        label: "form-label",
-        input: "form-control",
-        type: "text",
-      },
-      {
-        name: "gitHub",
-        title: "GitHub/Portfolio URL",
-        label: "form-label",
-        input: "form-control",
-        type: "text",
-      },
+
       {
         name: "personalSummary",
         title: "Personal Summary",
