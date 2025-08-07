@@ -1,56 +1,10 @@
-import React, { useState, useEffect } from "react";
-import data from "../data/data.js";
-
-const NewCvForm = () => {
-  const initialState = {
-    fullName: "",
-    profession: "",
-    email: "",
-    phoneNumber: "",
-    address: "",
-    personalSummary: "",
-    jobTitle: "",
-    company: "",
-    companyLocation: "",
-    companyStart: "",
-    companyEnd: "",
-    jobDescription: "",
-    degree: "",
-    school: "",
-    schoolLocation: "",
-    schoolStart: "",
-    schoolEnd: "",
-    additionalInfo: "",
-    projectTitle: "",
-    projectDescription: "",
-    technologiesUsed: "",
-    role: "",
-  };
-  const [user, setUser] = useState(initialState);
-  const [userCollection, setUserCollection] = useState([]);
-
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const newUser = { ...user, id: Date.now() };
-    setUserCollection([...userCollection, newUser]);
-    setUser(initialState); //Reset to initial
-  }
-
-  useEffect(() => {
-    console.log("User: ", user);
-    console.log("User Collection :", userCollection);
-  }, [user, userCollection]);
+const NewCvForm = ({ data, onSubmit, onChange, user }) => {
   return (
     <div className="container">
       <div className="text-center">
         <h1>CV Application Project</h1>
       </div>
-      <form className="px-4 pb-4" onSubmit={handleSubmit}>
+      <form className="px-4 pb-4" onSubmit={onSubmit}>
         {data.map((section) => (
           <>
             <h3>{section.section}</h3>
@@ -64,7 +18,7 @@ const NewCvForm = () => {
                   className={each.input}
                   name={each.name}
                   value={user[each.name] || ""}
-                  onChange={handleChange}
+                  onChange={onChange}
                 />
               </div>
             ))}
