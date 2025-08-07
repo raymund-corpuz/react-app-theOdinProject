@@ -25,7 +25,7 @@ const data = [
         type: "email",
       },
       {
-        name: "phone",
+        name: "phoneNumber",
         title: "Phone Number",
         label: "form-label",
         input: "form-control",

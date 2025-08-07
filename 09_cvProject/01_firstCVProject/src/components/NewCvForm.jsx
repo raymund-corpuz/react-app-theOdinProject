@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import data from "../data/data.js";
-import CvInput from "./CvInput.jsx";
 
 const NewCvForm = () => {
-  const [user, setUser] = useState({
+  const initialState = {
     fullName: "",
     profession: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     address: "",
-    linkedIn: "",
-    gitHub: "",
     personalSummary: "",
     jobTitle: "",
     company: "",
@@ -27,10 +24,9 @@ const NewCvForm = () => {
     projectTitle: "",
     projectDescription: "",
     technologiesUsed: "",
-    projectURL: "",
     role: "",
-  });
-  const { name, value } = user;
+  };
+  const [user, setUser] = useState(initialState);
   const [userCollection, setUserCollection] = useState([]);
 
   function handleChange(e) {
@@ -42,46 +38,44 @@ const NewCvForm = () => {
     e.preventDefault();
     const newUser = { ...user, id: Date.now() };
     setUserCollection([...userCollection, newUser]);
-    setUser({
-      fullName: "",
-      profession: "",
-      email: "",
-      phoneNumber: "",
-      address: "",
-      personalSummary: "",
-      jobTitle: "",
-      company: "",
-      companyLocation: "",
-      companyStart: "",
-      companyEnd: "",
-      jobDescription: "",
-      degree: "",
-      school: "",
-      schoolLocation: "",
-      schoolStart: "",
-      schoolEnd: "",
-      additionalInfo: "",
-      projectTitle: "",
-      projectDescription: "",
-      technologiesUsed: "",
-      role: "",
-    });
+    setUser(initialState); //Reset to initial
   }
 
   useEffect(() => {
-    console.log(user);
-    console.log(userCollection);
+    console.log("User: ", user);
+    console.log("User Collection :", userCollection);
   }, [user, userCollection]);
   return (
     <div className="container">
       <div className="text-center">
-        <h1>CV Application</h1>
+        <h1>CV Application Project</h1>
       </div>
-      <form action="" className="px-4 pb-4" onSubmit={handleSubmit}>
-        <h3>Personal Information</h3>
+      <form className="px-4 pb-4" onSubmit={handleSubmit}>
+        {data.map((section) => (
+          <>
+            <h3>{section.section}</h3>
+            {section.fields.map((each) => (
+              <div>
+                <label htmlFor="" className={each.label}>
+                  {each.title}
+                </label>
+                <input
+                  type={each.type}
+                  className={each.input}
+                  name={each.name}
+                  value={user[each.name] || ""}
+                  onChange={handleChange}
+                />
+              </div>
+            ))}
+          </>
+        ))}
+
+        {/* <h3>Personal Information</h3>
         <div className="mb-1">
           <label htmlFor="">Full Name</label>
           <input
+            required
             value={user.fullName}
             onChange={handleChange}
             name="fullName"
@@ -92,6 +86,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Professional</label>
           <input
+            required
             value={user.profession}
             onChange={handleChange}
             name="profession"
@@ -102,6 +97,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Email Address</label>
           <input
+            required
             value={user.email}
             onChange={handleChange}
             name="email"
@@ -112,6 +108,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Phone Number</label>
           <input
+            required
             value={user.phoneNumber}
             onChange={handleChange}
             name="phoneNumber"
@@ -122,6 +119,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Address</label>
           <input
+            required
             value={user.address}
             onChange={handleChange}
             name="address"
@@ -132,6 +130,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Personal Summary</label>
           <input
+            required
             value={user.personalSummary}
             onChange={handleChange}
             name="personalSummary"
@@ -143,6 +142,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Job Title</label>
           <input
+            required
             value={user.jobTitle}
             onChange={handleChange}
             name="jobTitle"
@@ -153,6 +153,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Company Name</label>
           <input
+            required
             value={user.company}
             onChange={handleChange}
             name="company"
@@ -163,6 +164,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Location</label>
           <input
+            required
             value={user.companyLocation}
             onChange={handleChange}
             name="companyLocation"
@@ -173,6 +175,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Start Date</label>
           <input
+            required
             value={user.companyStart}
             onChange={handleChange}
             name="companyStart"
@@ -183,6 +186,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">End Date</label>
           <input
+            required
             value={user.companyEnd}
             onChange={handleChange}
             name="companyEnd"
@@ -193,6 +197,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Job Description</label>
           <input
+            required
             value={user.jobDescription}
             onChange={handleChange}
             name="jobDescription"
@@ -204,6 +209,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Degree</label>
           <input
+            required
             value={user.degree}
             onChange={handleChange}
             name="degree"
@@ -214,6 +220,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">School / University</label>
           <input
+            required
             value={user.school}
             onChange={handleChange}
             name="school"
@@ -224,6 +231,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Location</label>
           <input
+            required
             value={user.schoolLocation}
             onChange={handleChange}
             name="schoolLocation"
@@ -234,6 +242,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Start Date</label>
           <input
+            required
             value={user.schoolStart}
             onChange={handleChange}
             name="schoolStart"
@@ -244,6 +253,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">End Date</label>
           <input
+            required
             value={user.schoolEnd}
             onChange={handleChange}
             name="schoolEnd"
@@ -254,6 +264,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Additional Info</label>
           <input
+            required
             value={user.additionalInfo}
             onChange={handleChange}
             name="additionalInfo"
@@ -266,6 +277,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Project Title</label>
           <input
+            required
             value={user.projectTitle}
             onChange={handleChange}
             name="projectTitle"
@@ -276,6 +288,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Project Description</label>
           <input
+            required
             value={user.projectDescription}
             onChange={handleChange}
             name="projectDescription"
@@ -286,6 +299,7 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Techinologies used</label>
           <input
+            required
             value={user.technologiesUsed}
             onChange={handleChange}
             name="technologiesUsed"
@@ -296,13 +310,14 @@ const NewCvForm = () => {
         <div className="mb-1">
           <label htmlFor="">Role</label>
           <input
+            required
             value={user.role}
             onChange={handleChange}
             name="role"
             type="text"
             className="form-control"
           />
-        </div>
+        </div> */}
 
         {/* submit */}
         <button type="submit" className="btn btn-primary mt-4">
