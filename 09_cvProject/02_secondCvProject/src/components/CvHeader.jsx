@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from "react";
+import data from "../data/data.js";
 
 export default function CvHeader() {
-  const initialState = {
-    name: "",
-    profession: "",
-    email: "",
-    phone: "",
-    address: "",
-    personalSummary: "",
-  };
+  const [step, setStep] = useState(0);
+
+  // const initialState = {
+  //   name: "",
+  //   profession: "",
+  //   email: "",
+  //   phone: "",
+  //   address: "",
+  //   personalSummary: "",
+  // };
+
+  const initialState = {};
+  data.forEach((section) =>
+    section.fields.forEach((field) => {
+      initialState[field.name] = "";
+    })
+  );
+
   const [user, setUser] = useState(initialState);
   const [profile, setProfile] = useState([]);
   const [editId, setEditId] = useState(null);
@@ -16,6 +27,18 @@ export default function CvHeader() {
   function handleChange(e) {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
+  }
+
+  function handleNext(e) {
+    e.preventDefault();
+    if (step < data.length - 1) {
+      setStep((prev) => prev + 1);
+    } else {
+      console.log("Final form data:", user);
+      alert("Form completed!");
+    }
+    // const newProfile = { ...user, id: Date.now() };
+    // setProfile([...profile, newProfile]);
   }
 
   function handleSubmit(e) {
@@ -27,7 +50,7 @@ export default function CvHeader() {
 
   function handleEdit(id) {
     const result = profile.find((item) => item.id === id);
-    console.log(result);
+    setUser(result);
     setEditId(id);
   }
 
@@ -39,8 +62,17 @@ export default function CvHeader() {
     const updatedUser = profile.map((item) =>
       item.id === editId ? { ...item, [name]: value } : item
     );
-
+    console.log(updatedUser);
     setProfile(updatedUser);
+  }
+
+  function handleSave() {
+    const updatedProfile = profile.map((item) =>
+      item.id === editId ? { ...user, id: editId } : item
+    );
+    setProfile(updatedProfile);
+    setEditId(null);
+    setUser(initialState);
   }
 
   useEffect(() => {
@@ -49,9 +81,28 @@ export default function CvHeader() {
   }, [user, profile]);
 
   return (
-    <div>
+    <div className="container mt-4">
       <h1>CV Builder Project</h1>
-      <CvInput user={user} onChange={handleChange} onSubmit={handleSubmit} />
+      <CvInput
+        section={data[step]}
+        user={user}
+        onChange={handleChange}
+        onNext={handleNext}
+        isLast={step === data.length - 1}
+      />
+
+      {/* <CvInput user={user} onChange={handleChange} onSubmit={handleSubmit} /> */}
+
+      {/* {data.map((item) => (
+        <CvInput
+          key={`${item.section}`}
+          section={item.section}
+          fields={item.fields}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+          user={user}
+        />
+      ))} */}
 
       {profile.map((item) => (
         <CvRender
@@ -62,82 +113,41 @@ export default function CvHeader() {
           edit={editId === item.id}
           onEdit={handleEdit}
           onChange={handleChangeInput}
+          onSave={handleSave}
         />
       ))}
     </div>
   );
 }
 
-function CvInput({ user, onChange, onSubmit }) {
+function CvInput({ section, user, onChange, onNext, isLast }) {
   return (
     <>
-      <form onSubmit={onSubmit}>
-        <h3>Personal Information</h3>
-        <div>
-          {" "}
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            onChange={onChange}
-            value={user.name}
-            name="name"
-          />
-        </div>
-        <div>
-          <label htmlFor="">Profession:</label>
-          <input
-            type="text"
-            value={user.profession}
-            onChange={onChange}
-            name="profession"
-          />
-        </div>
-        <div>
-          <label htmlFor="">Email:</label>
-          <input
-            type="email"
-            value={user.email}
-            onChange={onChange}
-            name="email"
-          />
-        </div>
-        <div>
-          {" "}
-          <label htmlFor="">Phone Number:</label>
-          <input
-            type="text"
-            value={user.phone}
-            onChange={onChange}
-            name="phone"
-          />
-        </div>
-        <div>
-          {" "}
-          <label htmlFor="">Address:</label>
-          <input
-            type="text"
-            value={user.address}
-            onChange={onChange}
-            name="address"
-          />
-        </div>
-        <div>
-          {" "}
-          <label htmlFor="">Personal Summary:</label>
-          <input
-            type="text"
-            value={user.personalSummary}
-            onChange={onChange}
-            name="personalSummary"
-          />
-        </div>
-        <button>Next</button>
+      <form onSubmit={onNext}>
+        <h3>{section.section}</h3>
+        {section.fields.map((field) => (
+          <div key={field.name} className="mb-3">
+            {" "}
+            <label className={field.label}>{field.title}</label>
+            <input
+              type={field.type}
+              className={field.input}
+              name={field.name}
+              value={user[field.name] || ""}
+              onChange={onChange}
+            />
+          </div>
+        ))}
+
+        <button className="btn btn-primary" type="submit">
+          {isLast ? "Submit" : "Next"}
+        </button>
       </form>
     </>
   );
 }
 
-function CvRender({ item, edit, onEdit, onChange }) {
+function CvRender({ item, edit, onEdit, onChange, onSave }) {
   return (
     <>
       {Object.entries(item).map(([key, value]) => (
@@ -149,19 +159,24 @@ function CvRender({ item, edit, onEdit, onChange }) {
           onChange={onChange}
         />
       ))}
-      <button onClick={() => onEdit(item.id)}>Edit</button>
+      {!edit ? (
+        <button onClick={() => onEdit(item.id)}>Edit</button>
+      ) : (
+        <button onClick={() => onSave(item.id)}>Save</button>
+      )}
     </>
   );
 }
 
 function CvSection({ name, value, edit, onChange }) {
-  const editInput = (
-    <input type="text" name={name} value={value || ""} onChange={onChange} />
-  );
+  // const editInput = (
+  //   <input type="text" name={name} value={value || ""} onChange={onChange} />
+  // );
   return (
     <div>
       <h3>
-        {name} : {!edit ? <span>{value}</span> : editInput}
+        {name} :<span>{value}</span>
+        {/* {!edit ? <span>{value}</span> : editInput} */}
       </h3>{" "}
     </div>
   );
