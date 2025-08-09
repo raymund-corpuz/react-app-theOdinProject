@@ -186,12 +186,23 @@ const data = [
 
 export default data;
 
-console.log(data);
-console.log(data[0]);
+let initialState = {};
 
-console.log(typeof data);
+// data.forEach((section) => {
+//   section.fields.forEach(({ name, title }) => {
+//     console.log(name, title);
+//     initialState[name] = "";
+//   });
+// });
 
-Object.entries(data).map(([key, value]) => {
-  console.log(key);
-  console.log(value);
+// console.log(initialState);
+
+const newData = data.map((section) => {
+  section.fields.map(({ name, title }) => {
+    console.log(name, title);
+  });
 });
+
+initialState[newData] = "";
+
+console.log(initialState);
