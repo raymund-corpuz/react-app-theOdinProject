@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import data from "../data/data.js";
 
 export default function Form() {
+  const [step, setStep] = useState(0);
+
   const initialState = {};
   data.forEach((section) => {
     section.fields.forEach((field) => {
       initialState[field.name] = "";
     });
   });
-  const [step, setStep] = useState(0);
   const [user, setUser] = useState(initialState);
+  const [profile, setProfile] = useState([]);
 
   function handleNext(e) {
     e.preventDefault();
@@ -26,14 +28,27 @@ export default function Form() {
     if (step > data.length - 1) {
       console.log("next");
     } else {
-      alert("Form Submitted");
+      confirm("Do you want to submit the form?");
     }
+    const newUser = { ...user, id: Date.now() };
+    setProfile([...profile, newUser]);
+    setUser(initialState);
   }
 
   function handleCancel(e) {
     e.preventDefault();
     setStep(0);
   }
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+  }
+
+  useEffect(() => {
+    console.log("User: ", user);
+    console.log("Profile: ", profile);
+  }, [user, profile]);
 
   return (
     <div className="container-fluid">
@@ -46,6 +61,7 @@ export default function Form() {
         onSubmit={handleSubmit}
         onPrevious={handlePrev}
         onCancel={handleCancel}
+        onChange={handleChange}
       />
     </div>
   );
@@ -59,20 +75,19 @@ function FormSection({
   onSubmit,
   onPrevious,
   onCancel,
+  onChange,
 }) {
   return (
-    <form className="col-5">
+    <form className="col-12">
       <h3>{section.section}</h3>
 
       {section.fields.map((field) => (
-        <div key={field.name} className="my-2">
-          <label>{field.title}</label>
-          <input
-            className={field.input}
-            type={field.type}
-            value={user[field.name] || ""}
-          />
-        </div>
+        <FormInput
+          field={field}
+          user={user}
+          key={`${field.title}`}
+          onChange={onChange}
+        />
       ))}
 
       {step >= data.length - 1 ? (
@@ -90,11 +105,17 @@ function FormSection({
   );
 }
 
-function FormInput() {
+function FormInput({ field, user, onChange }) {
   return (
-    <div>
-      <label htmlFor=""></label>
-      <input type="text" />
+    <div key={field.name} className="my-2">
+      <label>{field.title}</label>
+      <input
+        className={field.input}
+        type={field.type}
+        name={field.name}
+        value={user[field.name] || ""}
+        onChange={onChange}
+      />
     </div>
   );
 }
