@@ -185,3 +185,37 @@ const data = [
 ];
 
 export default data;
+
+const newData = [
+  {
+    additionalInfo: "Additional info",
+    address: "Nama Rd",
+    company: "sumi",
+    companyEnd: "2025-07-28",
+    companyLocation: "Binalonan",
+    companyStart: "2025-07-28",
+    degree: "",
+    email: "raymund@gmail.com",
+    fullName: "Raymund Corpuz",
+    jobDescription: "every goo boy does file",
+    jobTitle: "Project Planner",
+    personalSummary: "Be able to create a website",
+    phoneNumber: "09636318880",
+    profession: "Fron End Developer",
+    projectDescription: "portfolio description",
+    projectTitle: "Porfolio title",
+    projectURL: "another URL",
+    role: "manager",
+    school: "DMMMSU",
+    schoolEnd: "2025-07-28",
+    schoolLocation: "Agoo",
+    schoolStart: "2025-07-28",
+    technologiesUsed: "React",
+  },
+];
+
+const final = Object.entries(newData).map(([key, value]) => {
+  return key, value;
+});
+
+console.log(final);

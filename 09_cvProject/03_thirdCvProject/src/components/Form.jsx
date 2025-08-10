@@ -12,6 +12,7 @@ export default function Form() {
   });
   const [user, setUser] = useState(initialState);
   const [profile, setProfile] = useState([]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   function handleNext(e) {
     e.preventDefault();
@@ -30,14 +31,10 @@ export default function Form() {
     } else {
       confirm("Do you want to submit the form?");
     }
-    const newUser = { ...user, id: Date.now() };
+    const newUser = { ...user };
     setProfile([...profile, newUser]);
     setUser(initialState);
-  }
-
-  function handleCancel(e) {
-    e.preventDefault();
-    setStep(0);
+    setIsSubmitted(true);
   }
 
   function handleChange(e) {
@@ -51,18 +48,33 @@ export default function Form() {
   }, [user, profile]);
 
   return (
-    <div className="container-fluid">
-      <h1>Form</h1>
-      <FormSection
-        section={data[step]}
-        user={user}
-        step={step}
-        onNext={handleNext}
-        onSubmit={handleSubmit}
-        onPrevious={handlePrev}
-        onCancel={handleCancel}
-        onChange={handleChange}
-      />
+    <div className="container ">
+      <div className="form-section col-12 justify-content-center ">
+        <div className="d-flex justify-content-center my-2 ">
+          {" "}
+          <h1>Form</h1>
+        </div>
+        <FormSection
+          section={data[step]}
+          user={user}
+          step={step}
+          onNext={handleNext}
+          onSubmit={handleSubmit}
+          onPrevious={handlePrev}
+          onChange={handleChange}
+          isSubmitted={isSubmitted}
+        />
+      </div>
+      <div className="output-section col-12 mt-4">
+        <h1>Display CV</h1>
+        <div>
+          {profile.map((item) =>
+            Object.entries(item).map(([key, value]) => (
+              <DisplayCV name={key} value={value} />
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -74,11 +86,11 @@ function FormSection({
   onNext,
   onSubmit,
   onPrevious,
-  onCancel,
   onChange,
+  isSubmitted,
 }) {
   return (
-    <form className="col-12">
+    <form>
       <h3>{section.section}</h3>
 
       {section.fields.map((field) => (
@@ -92,8 +104,12 @@ function FormSection({
 
       {step >= data.length - 1 ? (
         <div className="d-flex justify-content-end">
-          <Cancel onCancel={onCancel} />
-          <Submit onSubmit={onSubmit} />
+          <Back onPrevious={onPrevious} />
+          {!isSubmitted ? (
+            <Submit onSubmit={onSubmit} />
+          ) : (
+            <button className="btn btn-danger">Edit</button>
+          )}
         </div>
       ) : (
         <div className="d-flex justify-content-end">
@@ -144,10 +160,12 @@ function Back({ onPrevious }) {
   );
 }
 
-function Cancel({ onCancel }) {
+function DisplayCV({ name, value }) {
+  const result = name.replace(/([a-z])([A-Z])/g, "$1 $2");
+  const fResult = result.charAt(0).toUpperCase() + result.slice(1);
   return (
-    <button className="btn btn-secondary mx-4" onClick={onCancel}>
-      Cancel
-    </button>
+    <div>
+      {fResult}: {value}
+    </div>
   );
 }
