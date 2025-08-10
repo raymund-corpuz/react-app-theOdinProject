@@ -13,7 +13,12 @@ export default function Form() {
 
   function handleNext(e) {
     e.preventDefault();
-    setStep((prevState) => prevState + 1);
+    setStep((nextState) => nextState + 1);
+  }
+
+  function handlePrev(e) {
+    e.preventDefault();
+    setStep((prevState) => prevState - 1);
   }
 
   function handleSubmit(e) {
@@ -25,8 +30,13 @@ export default function Form() {
     }
   }
 
+  function handleCancel(e) {
+    e.preventDefault();
+    setStep(0);
+  }
+
   return (
-    <div className="container-xxl">
+    <div className="container-fluid">
       <h1>Form</h1>
       <FormSection
         section={data[step]}
@@ -34,12 +44,22 @@ export default function Form() {
         step={step}
         onNext={handleNext}
         onSubmit={handleSubmit}
+        onPrevious={handlePrev}
+        onCancel={handleCancel}
       />
     </div>
   );
 }
 
-function FormSection({ section, user, step, onNext, onSubmit }) {
+function FormSection({
+  section,
+  user,
+  step,
+  onNext,
+  onSubmit,
+  onPrevious,
+  onCancel,
+}) {
   return (
     <form className="col-5">
       <h3>{section.section}</h3>
@@ -56,9 +76,15 @@ function FormSection({ section, user, step, onNext, onSubmit }) {
       ))}
 
       {step >= data.length - 1 ? (
-        <Submit onSubmit={onSubmit} />
+        <div className="d-flex justify-content-end">
+          <Cancel onCancel={onCancel} />
+          <Submit onSubmit={onSubmit} />
+        </div>
       ) : (
-        <Next onNext={onNext} />
+        <div className="d-flex justify-content-end">
+          {step !== 0 && <Back onPrevious={onPrevious} />}
+          <Next onNext={onNext} />
+        </div>
       )}
     </form>
   );
@@ -75,7 +101,7 @@ function FormInput() {
 
 function Next({ onNext }) {
   return (
-    <button className="btn btn-primary" onClick={onNext}>
+    <button className="btn btn-primary justify-content-end" onClick={onNext}>
       Next
     </button>
   );
@@ -85,6 +111,22 @@ function Submit({ onSubmit }) {
   return (
     <button className="btn btn-primary" onClick={onSubmit}>
       Submit
+    </button>
+  );
+}
+
+function Back({ onPrevious }) {
+  return (
+    <button className="btn btn-secondary mx-4" onClick={onPrevious}>
+      Previous
+    </button>
+  );
+}
+
+function Cancel({ onCancel }) {
+  return (
+    <button className="btn btn-secondary mx-4" onClick={onCancel}>
+      Cancel
     </button>
   );
 }
