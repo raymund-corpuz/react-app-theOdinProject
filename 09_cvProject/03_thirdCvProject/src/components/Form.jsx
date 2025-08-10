@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import data from "../data/data.js";
 
 export default function Form() {
@@ -13,6 +13,7 @@ export default function Form() {
   const [user, setUser] = useState(initialState);
   const [profile, setProfile] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   function handleNext(e) {
     e.preventDefault();
@@ -33,7 +34,6 @@ export default function Form() {
     }
     const newUser = { ...user };
     setProfile([...profile, newUser]);
-    setUser(initialState);
     setIsSubmitted(true);
   }
 
@@ -42,39 +42,43 @@ export default function Form() {
     setUser({ ...user, [name]: value });
   }
 
-  useEffect(() => {
-    console.log("User: ", user);
-    console.log("Profile: ", profile);
-  }, [user, profile]);
+  function handleEdit() {
+    setIsEdit(true);
+    setIsSubmitted(false);
+  }
 
   return (
     <div className="container ">
-      <div className="form-section col-12 justify-content-center ">
-        <div className="d-flex justify-content-center my-2 ">
-          {" "}
-          <h1>Form</h1>
+      {!isSubmitted ? (
+        <div className="form-section col-12 justify-content-center ">
+          <div className="d-flex justify-content-center my-2 ">
+            {" "}
+            <h1>Form</h1>
+          </div>
+          <FormSection
+            section={data[step]}
+            user={user}
+            step={step}
+            onNext={handleNext}
+            onSubmit={handleSubmit}
+            onPrevious={handlePrev}
+            onChange={handleChange}
+            isSubmitted={isSubmitted}
+            isEdit={isEdit}
+            profile={profile}
+          />
         </div>
-        <FormSection
-          section={data[step]}
-          user={user}
-          step={step}
-          onNext={handleNext}
-          onSubmit={handleSubmit}
-          onPrevious={handlePrev}
-          onChange={handleChange}
-          isSubmitted={isSubmitted}
-        />
-      </div>
-      <div className="output-section col-12 mt-4">
-        <h1>Display CV</h1>
-        <div>
-          {profile.map((item) =>
-            Object.entries(item).map(([key, value]) => (
-              <DisplayCV name={key} value={value} />
-            ))
-          )}
+      ) : (
+        <div className="output-section col-12 mt-4">
+          <Edit onEdit={handleEdit} />
+
+          <div>
+            {Object.entries(user).map(([key, value]) => (
+              <DisplayCV name={key} value={value} onEdit={handleEdit} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -88,6 +92,8 @@ function FormSection({
   onPrevious,
   onChange,
   isSubmitted,
+  isEdit,
+  profile,
 }) {
   return (
     <form>
@@ -99,6 +105,8 @@ function FormSection({
           user={user}
           key={`${field.title}`}
           onChange={onChange}
+          isEdit={isEdit}
+          profile={profile}
         />
       ))}
 
@@ -106,7 +114,7 @@ function FormSection({
         <div className="d-flex justify-content-end">
           <Back onPrevious={onPrevious} />
           {!isSubmitted ? (
-            <Submit onSubmit={onSubmit} />
+            <Submit onSubmit={onSubmit} isEdit={isEdit} />
           ) : (
             <button className="btn btn-danger">Edit</button>
           )}
@@ -144,11 +152,22 @@ function Next({ onNext }) {
   );
 }
 
-function Submit({ onSubmit }) {
+function Submit({ onSubmit, isEdit }) {
   return (
     <button className="btn btn-primary" onClick={onSubmit}>
-      Submit
+      {!isEdit ? "Submit" : "Save"}
     </button>
+  );
+}
+
+function Edit({ onEdit }) {
+  return (
+    <div className="d-flex justify-content-between">
+      <h1>The Odin Project: CV Application</h1>
+      <button className="btn btn-outline-primary btn-sm px-4" onClick={onEdit}>
+        Edit
+      </button>
+    </div>
   );
 }
 
