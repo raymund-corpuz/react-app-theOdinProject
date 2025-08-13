@@ -7,40 +7,95 @@ const MemoryCard = () => {
   const [highestScore, setHighestScore] = useState(0);
   const [currentScore, setCurrentScore] = useState(0);
 
+  // useEffect(() => {
+  //   async function fetchPokemon() {
+  //     try {
+  //       const response = await fetch(
+  //         "https://pokeapi.co/api/v2/pokemon?limit=20"
+  //       );
+  //       const data = await response.json();
+
+  //       const pokemonData = await Promise.all(
+  //         data.results.map(async (pokemon) => {
+  //           const res = await fetch(pokemon.url);
+  //           const details = await res.json();
+
+  //           console.log(details);
+
+  //           const name = details.name;
+  //           const image =
+  //             details.sprites.other["official-artwork"].front_default;
+  //           const id = details.id;
+  //           const newPokemon = { name: name, image: image, id: id };
+  //           setPokemonCollection((prevCollection) => [
+  //             ...prevCollection,
+  //             newPokemon,
+  //           ]);
+  //         })
+  //       );
+  //     } catch (error) {
+  //       console.error("Error occured: ", error);
+  //     } finally {
+  //       setTimeout(() => {
+  //         setIsLoading(false);
+  //       }, 1000);
+  //     }
+  //   }
+
+  //   fetchPokemon();
+  // }, []);
+
   useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
     async function fetchPokemon() {
       try {
         const response = await fetch(
-          "https://pokeapi.co/api/v2/pokemon?limit=60"
+          "https://pokeapi.co/api/v2/pokemon?limit=20",
+          { signal: controller.signal }
         );
         const data = await response.json();
 
         const pokemonData = await Promise.all(
           data.results.map(async (pokemon) => {
-            const res = await fetch(pokemon.url);
+            const res = await fetch(pokemon.url, { signal: controller.signal });
             const details = await res.json();
 
-            const name = details.name;
-            const image =
-              details.sprites.other["official-artwork"].front_default;
-            const newPokemon = { name: name, image: image };
-            setPokemonCollection((prevCollection) => [
-              ...prevCollection,
-              newPokemon,
-            ]);
+            return {
+              name: details.name,
+              image: details.sprites.other["official-artwork"].front_default,
+              id: details.id,
+            };
           })
         );
+
+        if (isMounted) {
+          setPokemonCollection(pokemonData);
+          console.log("Component Update");
+        }
       } catch (error) {
-        console.error("Error occured: ", error);
+        if (error.name !== "AbortError") {
+          console.error("Error occured: ", error);
+        }
       } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
+        if (isMounted) {
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 1000);
+          console.log("✅ Component Mounted");
+        }
       }
     }
 
     fetchPokemon();
+    return () => {
+      isMounted = false;
+      controller.abort();
+      console.log("❌ Component Unmount");
+    };
   }, []);
+
   return (
     <div style={{ margin: "0 auto" }}>
       <h1 style={{ textAlign: "center" }}>Project: Memory Card</h1>
@@ -55,7 +110,12 @@ const MemoryCard = () => {
       {!isLoading ? (
         <div style={{ display: "flex", flexWrap: "wrap" }}>
           {pokemonCollection.map((pokemon, index) => (
-            <RenderCard name={pokemon.name} key={index} img={pokemon.image} />
+            <RenderCard
+              name={pokemon.name}
+              key={index}
+              img={pokemon.image}
+              id={pokemon.id}
+            />
           ))}
         </div>
       ) : (
@@ -67,17 +127,18 @@ const MemoryCard = () => {
 
 export default MemoryCard;
 
-function RenderCard({ name, img }) {
+function RenderCard({ name, img, id }) {
   return (
     <div
       style={{
         border: "1px solid gray",
         margin: "0.5rem",
-        padding: " 1rem ",
+        padding: "1rem  ",
         borderRadius: "0.5rem",
       }}
     >
-      <h3 style={{ textAlign: "center" }}>
+      <h3 style={{ margin: "0" }}>{id}</h3>
+      <h3 style={{ textAlign: "center", margin: "0" }}>
         {name.charAt(0).toUpperCase() + name.slice(1)}
       </h3>
       <img src={img} alt={name} width={"100px"} />
