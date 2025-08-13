@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import Loader from "./Loader";
 
 const MemoryCard = () => {
-  const [pokemon, setPokemon] = useState({ name: "", image: "" });
   const [pokemonCollection, setPokemonCollection] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [highestScore, setHighestScore] = useState(0);
+  const [currentScore, setCurrentScore] = useState(0);
 
   useEffect(() => {
     async function fetchPokemon() {
@@ -41,8 +42,16 @@ const MemoryCard = () => {
     fetchPokemon();
   }, []);
   return (
-    <div>
-      <h1>Memory Card</h1>
+    <div style={{ margin: "0 auto" }}>
+      <h1 style={{ textAlign: "center" }}>Project: Memory Card</h1>
+      <div
+        style={{
+          display: "flex",
+        }}
+      >
+        <h3 style={{ marginRight: "2rem" }}>Current Score:{currentScore}</h3>
+        <h3>Highest Score: {highestScore}</h3>
+      </div>
       {!isLoading ? (
         <div style={{ display: "flex", flexWrap: "wrap" }}>
           {pokemonCollection.map((pokemon, index) => (
@@ -64,7 +73,7 @@ function RenderCard({ name, img }) {
       style={{
         border: "1px solid gray",
         margin: "0.5rem",
-        padding: "1rem",
+        padding: " 1rem ",
         borderRadius: "0.5rem",
       }}
     >
