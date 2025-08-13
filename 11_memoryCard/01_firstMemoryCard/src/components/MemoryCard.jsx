@@ -97,26 +97,84 @@ const MemoryCard = () => {
     };
   }, []);
 
+  // function handleShuffle(id) {
+  //   setSelected((prevSelected) => {
+  //     if (prevSelected.includes(id)) {
+  //       setCurrentScore(0);
+  //       return [];
+  //     } else {
+  //       setCurrentScore((prev) => {
+  //         const newScore = prev + 1;
+  //         setHighestScore((highest) => Math.max(highest, newScore));
+  //         return newScore;
+  //       });
+
+  //       return [...prevSelected, id];
+  //     }
+  //   });
+  //   // const mySet = new Set();
+  //   // mySet.add(id);
+  //   // const myArray = Array.from(mySet);
+  //   // console.log(mySet);
+
+  //   // myArray.filter((select) =>
+  //   //   select !== id ? setCurrentScore((prev) => prev + 1) : setCurrentScore(0)
+  //   // );
+  //   // setSelected((prevSeleleted) => [...prevSeleleted, mySet]);
+
+  //   let shufflePokemon = [...pokemonCollection];
+  //   let currentIndex = shufflePokemon.length;
+  //   let randomIndex;
+
+  //   while (currentIndex !== 0) {
+  //     randomIndex = Math.floor(Math.random() * currentIndex);
+  //     currentIndex--;
+
+  //     [shufflePokemon[currentIndex], shufflePokemon[randomIndex]] = [
+  //       shufflePokemon[randomIndex],
+  //       shufflePokemon[currentIndex],
+  //     ];
+  //   }
+
+  //   setPokemonCollection(shufflePokemon);
+  // }
+
   function handleShuffle(id) {
-    // pokemonCollection.filter((pokemon) =>
-    //   pokemon.id !== id ? setCurrentScore(currentScore + 1) : setCurrentScore(0)
-    // );
+    const isDuplicated = selected.includes(id);
 
-    let shufflePokemon = [...pokemonCollection];
-    let currentIndex = shufflePokemon.length;
-    let randomIndex;
+    if (isDuplicated) {
+      setCurrentScore(0);
+      setSelected([]);
+      alert("GAME OVER!!!");
+      confirm("Do you want try again?");
+    } else {
+      const newScore = currentScore + 1;
+      setCurrentScore(newScore);
 
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
+      if (newScore > highestScore) {
+        setHighestScore(newScore);
+      }
 
-      [shufflePokemon[currentIndex], shufflePokemon[randomIndex]] = [
-        shufflePokemon[randomIndex],
-        shufflePokemon[currentIndex],
-      ];
+      setSelected((prevSelected) => [...prevSelected, id]);
     }
 
-    setPokemonCollection(shufflePokemon);
+    setPokemonCollection((prevCollection) => {
+      const shuffled = [...prevCollection];
+      let currentIndex = shuffled.length;
+      let randomIndex;
+
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        [shuffled[currentIndex], shuffled[randomIndex]] = [
+          shuffled[randomIndex],
+          shuffled[currentIndex],
+        ];
+      }
+
+      return shuffled;
+    });
   }
 
   return (
