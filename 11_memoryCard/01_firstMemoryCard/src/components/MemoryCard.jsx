@@ -6,6 +6,7 @@ const MemoryCard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [highestScore, setHighestScore] = useState(0);
   const [currentScore, setCurrentScore] = useState(0);
+  const [selected, setSelected] = useState([]);
 
   // useEffect(() => {
   //   async function fetchPokemon() {
@@ -96,6 +97,28 @@ const MemoryCard = () => {
     };
   }, []);
 
+  function handleShuffle(id) {
+    // pokemonCollection.filter((pokemon) =>
+    //   pokemon.id !== id ? setCurrentScore(currentScore + 1) : setCurrentScore(0)
+    // );
+
+    let shufflePokemon = [...pokemonCollection];
+    let currentIndex = shufflePokemon.length;
+    let randomIndex;
+
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      [shufflePokemon[currentIndex], shufflePokemon[randomIndex]] = [
+        shufflePokemon[randomIndex],
+        shufflePokemon[currentIndex],
+      ];
+    }
+
+    setPokemonCollection(shufflePokemon);
+  }
+
   return (
     <div style={{ margin: "0 auto" }}>
       <h1 style={{ textAlign: "center" }}>Project: Memory Card</h1>
@@ -107,14 +130,18 @@ const MemoryCard = () => {
         <h3 style={{ marginRight: "2rem" }}>Current Score:{currentScore}</h3>
         <h3>Highest Score: {highestScore}</h3>
       </div>
+      {/* <button onClick={handleShuffle} style={{ padding: "0.5rem" }}>
+        Shuffle
+      </button> */}
       {!isLoading ? (
         <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {pokemonCollection.map((pokemon, index) => (
+          {pokemonCollection.map((pokemon) => (
             <RenderCard
               name={pokemon.name}
-              key={index}
+              key={pokemon.id}
               img={pokemon.image}
               id={pokemon.id}
+              onShuffle={handleShuffle}
             />
           ))}
         </div>
@@ -127,7 +154,7 @@ const MemoryCard = () => {
 
 export default MemoryCard;
 
-function RenderCard({ name, img, id }) {
+function RenderCard({ name, img, id, onShuffle }) {
   return (
     <div
       style={{
@@ -136,6 +163,7 @@ function RenderCard({ name, img, id }) {
         padding: "1rem  ",
         borderRadius: "0.5rem",
       }}
+      onClick={() => onShuffle(id)}
     >
       <h3 style={{ margin: "0" }}>{id}</h3>
       <h3 style={{ textAlign: "center", margin: "0" }}>
