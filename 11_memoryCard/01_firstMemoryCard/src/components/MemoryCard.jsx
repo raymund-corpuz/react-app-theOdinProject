@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import Loader from "./Loader";
 
 const MemoryCard = () => {
   const [pokemon, setPokemon] = useState({ name: "", image: "" });
   const [pokemonCollection, setPokemonCollection] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchPokemon() {
@@ -29,6 +31,10 @@ const MemoryCard = () => {
         );
       } catch (error) {
         console.error("Error occured: ", error);
+      } finally {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
       }
     }
 
@@ -37,11 +43,15 @@ const MemoryCard = () => {
   return (
     <div>
       <h1>Memory Card</h1>
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {pokemonCollection.map((pokemon, index) => (
-          <RenderCard name={pokemon.name} key={index} img={pokemon.image} />
-        ))}
-      </div>
+      {!isLoading ? (
+        <div style={{ display: "flex", flexWrap: "wrap" }}>
+          {pokemonCollection.map((pokemon, index) => (
+            <RenderCard name={pokemon.name} key={index} img={pokemon.image} />
+          ))}
+        </div>
+      ) : (
+        <Loader />
+      )}
     </div>
   );
 };
