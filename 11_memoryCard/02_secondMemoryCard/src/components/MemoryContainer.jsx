@@ -91,6 +91,26 @@ const MemoryContainer = () => {
   //       controller.abort();
   //     };
   //   }, []);
+
+  function handleShuffle() {
+    console.log("click");
+    let shufflePokemon = [...pokemons];
+    let currentIndex = shufflePokemon.length;
+    let randomIndex;
+
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      [shufflePokemon[currentIndex], shufflePokemon[randomIndex]] = [
+        shufflePokemon[randomIndex],
+        shufflePokemon[currentIndex],
+      ];
+    }
+
+    setPokemons(shufflePokemon);
+  }
+
   return (
     <div>
       <h1>MemoryContainer</h1>
@@ -102,6 +122,7 @@ const MemoryContainer = () => {
               id={pokemon.id}
               key={pokemon.id}
               image={pokemon.image}
+              onShuffle={handleShuffle}
             />
           ))
         ) : (
@@ -114,7 +135,7 @@ const MemoryContainer = () => {
 
 export default MemoryContainer;
 
-function MemoryCard({ name, id, image }) {
+function MemoryCard({ name, id, image, onShuffle }) {
   const properCase = name.charAt(0).toUpperCase() + name.slice(1);
   return (
     <div
@@ -123,7 +144,9 @@ function MemoryCard({ name, id, image }) {
         padding: "0.5rem",
         margin: "1rem",
         borderRadius: "0.5rem",
+        cursor: "pointer",
       }}
+      onClick={onShuffle}
     >
       <h4 style={{ margin: "0", textAlign: "center" }}>
         {" "}
