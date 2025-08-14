@@ -3,6 +3,31 @@ import { Component } from "react";
 class ClassInput extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      todos: [],
+      inputVal: "",
+      id: Date.now(),
+    };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleInputChange(e) {
+    this.setState((state) => ({
+      ...state,
+      inputVal: e.target.value,
+    }));
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    this.setState((state) => ({
+      todos: state.todos.concat(state.inputVal),
+      inputVal: "",
+    }));
+    console.log(this.todos);
   }
 
   render() {
@@ -10,15 +35,28 @@ class ClassInput extends Component {
       <section>
         <h3>{this.props.name}</h3>
 
-        <form>
+        <form onSubmit={this.handleSubmit}>
           <label htmlFor="task-entry">Enter a task:</label>
-          <input type="text" id="task-entry" name="task-entry" />
+          <input
+            type="text"
+            id="task-entry"
+            name="task-entry"
+            value={this.state.inputVal}
+            onChange={this.handleInputChange}
+          />
           <button type="submit">Submit</button>
         </form>
 
         <h4>All the tasks!</h4>
 
-        <ul></ul>
+        <ul>
+          {this.state.todos.map((todo) => (
+            <li key={todo}>
+              {todo}
+              <button>delete</button>
+            </li>
+          ))}
+        </ul>
       </section>
     );
   }
