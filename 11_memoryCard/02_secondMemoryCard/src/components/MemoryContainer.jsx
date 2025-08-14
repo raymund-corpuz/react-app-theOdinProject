@@ -4,6 +4,9 @@ import Loader from "./Loader";
 const MemoryContainer = () => {
   const [pokemons, setPokemons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selected, setSelected] = useState([]);
+  const [currentScore, setCurrentScore] = useState(0);
+  const [highestScore, setHighestScore] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -92,31 +95,51 @@ const MemoryContainer = () => {
   //     };
   //   }, []);
 
-  function handleShuffle() {
-    console.log("click");
-    let shufflePokemon = [...pokemons];
-    let currentIndex = shufflePokemon.length;
-    let randomIndex;
+  function handleShuffle(id) {
+    const isDuplicated = selected.includes(id);
 
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
+    if (isDuplicated) {
+      setCurrentScore(0);
+      setSelected([]);
+      alert("GAME OVER!!!");
+      confirm("DO YOU WANT TO TRY AGAIN ?");
+    } else {
+      const newScore = currentScore + 1;
+      setCurrentScore(newScore);
 
-      [shufflePokemon[currentIndex], shufflePokemon[randomIndex]] = [
-        shufflePokemon[randomIndex],
-        shufflePokemon[currentIndex],
-      ];
+      if (newScore > highestScore) {
+        setHighestScore(newScore);
+      }
+      setSelected((prevSelected) => [...prevSelected, id]);
     }
 
-    setPokemons(shufflePokemon);
+    setPokemons((prevPokemon) => {
+      let shufflePokemon = [...prevPokemon];
+      let currentIndex = shufflePokemon.length;
+      let randomIndex;
+
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        [shufflePokemon[currentIndex], shufflePokemon[randomIndex]] = [
+          shufflePokemon[randomIndex],
+          shufflePokemon[currentIndex],
+        ];
+      }
+      return shufflePokemon;
+    });
   }
 
   return (
     <div>
       <h1>MemoryContainer</h1>
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {!isLoading ? (
-          pokemons.map((pokemon) => (
+      <h3 style={{ margin: "0.5rem" }}>Current Score: {currentScore}</h3>
+      <h3 style={{ margin: "0.5rem" }}>Highest Score: {highestScore}</h3>
+
+      {!isLoading ? (
+        <div style={{ display: "flex", flexWrap: "wrap" }}>
+          {pokemons.map((pokemon) => (
             <MemoryCard
               name={pokemon.name}
               id={pokemon.id}
@@ -124,11 +147,11 @@ const MemoryContainer = () => {
               image={pokemon.image}
               onShuffle={handleShuffle}
             />
-          ))
-        ) : (
-          <Loader />
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <Loader />
+      )}
     </div>
   );
 };
@@ -146,7 +169,7 @@ function MemoryCard({ name, id, image, onShuffle }) {
         borderRadius: "0.5rem",
         cursor: "pointer",
       }}
-      onClick={onShuffle}
+      onClick={() => onShuffle(id)}
     >
       <h4 style={{ margin: "0", textAlign: "center" }}>
         {" "}
