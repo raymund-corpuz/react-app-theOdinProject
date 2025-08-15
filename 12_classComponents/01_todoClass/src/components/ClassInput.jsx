@@ -3,7 +3,6 @@ import { Component } from "react";
 class ClassInput extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       todos: [],
       newTaskText: "",
@@ -14,77 +13,69 @@ class ClassInput extends Component {
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    // this.handleDelete = this.handleDelete.bind(this);
-    // this.handleEdit = this.handleEdit.bind(this);
-    // this.handleEditInputChanger = this.handleEditInputChanger(this);
-    // this.handleEditTodo = this.handleEditTodo(this);
-    // this.handleSubmitEdit = this.handleSubmitEdit(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleEditInputChanger = this.handleEditInputChanger.bind(this);
+    this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
   }
 
   handleInputChange(e) {
-    // onChange
     this.setState({ newTaskText: e.target.value });
   }
 
   handleSubmit(e) {
-    // onAddTask
     e.preventDefault();
+    const obj = { name: this.state.newTaskText, id: Date.now() };
 
-    const obj = {
-      name: this.state.newTaskText,
-      id: Date.now(),
-    };
-
-    if (this.state.newTaskText !== "") {
-      this.setState({ todos: this.state.todos.concat(obj) });
-      this.setState({ newTaskText: "" });
+    if (this.state.newTaskText.trim() !== "") {
+      this.setState((prev) => ({
+        todos: [...prev.todos, obj],
+        newTaskText: "",
+      }));
     }
   }
 
   handleDelete(itemId) {
-    // onDeleteTask
-    this.setState({
-      todos: [...this.state.todos].filter((id) => id.id !== itemId),
-    });
-  }
-  handleEditTodo(id, newValue) {
-    // onEditTodo
-    this.state.todos.map((todo) => {
-      if (todo.id === id) {
-        todo.name = newValue;
-      }
-    });
-  }
-  handleSubmitEdit(e) {
-    // onSubmitEditTodo
-    e.preventDefault();
-    this.handleEditTodo(this.state.currentid, this.state.currentValue);
-    this.setState({ editing: false });
+    this.setState((prev) => ({
+      todos: prev.todos.filter((todo) => todo.id !== itemId),
+    }));
   }
 
   handleEdit(todo) {
-    // onToggleEdit
-    this.setState({ editing: true });
-    this.setState({ currentid: todo.id });
-    this.setState({ currentValue: todo.name });
+    this.setState({
+      editing: true,
+      currentid: todo.id,
+      currentValue: todo.name,
+    });
   }
 
   handleEditInputChanger(e) {
     this.setState({ currentValue: e.target.value });
   }
 
+  handleSubmitEdit(e) {
+    e.preventDefault();
+    this.setState((prev) => ({
+      todos: prev.todos.map((todo) =>
+        todo.id === prev.currentid ? { ...todo, name: prev.currentValue } : todo
+      ),
+      editing: false,
+      currentid: "",
+      currentValue: "",
+    }));
+  }
+
   render() {
     return (
       <section>
-        {this.state.editing === false ? (
+        {!this.state.editing ? (
           <>
-            <h3>Todo List</h3>{" "}
+            <h3>Todo List</h3>
             <form onSubmit={this.handleSubmit}>
               <label htmlFor="task-entry">Enter a task:</label>
               <input
                 type="text"
                 id="task-entry"
-                name="task-entry"
                 value={this.state.newTaskText}
                 onChange={this.handleInputChange}
               />
@@ -93,9 +84,9 @@ class ClassInput extends Component {
             <h4>All the tasks!</h4>
             <ul>
               {this.state.todos.map((todo) => (
-                <li key={todo}>
+                <li key={todo.id}>
                   {todo.name}
-                  <button onClick={() => this.handleEdit(todo.id)}>edit</button>
+                  <button onClick={() => this.handleEdit(todo)}>edit</button>
                   <button onClick={() => this.handleDelete(todo.id)}>
                     delete
                   </button>
@@ -108,10 +99,9 @@ class ClassInput extends Component {
             <input
               type="text"
               value={this.state.currentValue}
-              name={this.state.currentValue}
               onChange={this.handleEditInputChanger}
             />
-            <button onClick={this.handleSubmitEdit}>Update Item</button>
+            <button type="submit">Update Item</button>
           </form>
         )}
       </section>
