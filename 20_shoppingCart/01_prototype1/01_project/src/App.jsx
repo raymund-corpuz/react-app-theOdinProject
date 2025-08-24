@@ -5,6 +5,7 @@ import Accessories from "./pages/Accessories";
 import Shop from "./pages/Shop";
 import Navbar from "./components/Navbar";
 import { Route, Routes } from "react-router-dom";
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/accessories" element={<Accessories />} />
         <Route path="/shop" element={<Shop />} />
       </Routes>
+      <Footer />
     </div>
   );
 };
