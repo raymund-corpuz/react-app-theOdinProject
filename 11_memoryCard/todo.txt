@@ -1,0 +1,6 @@
+done 1. create a react project
+2.score board -current score
+3.highest score
+4.function that display cards in random order.
+done 5.fetch from an external API.
+done 6. loader
