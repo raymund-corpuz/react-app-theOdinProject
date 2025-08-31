@@ -6,7 +6,9 @@ function factorial(n) {
   if (n <= 1) return 1;
   let result = 1;
   for (let i = 2; i <= n; i++) {
-    for (let j = 0; j < 100000; j++) {}
+    for (let j = 0; j < 100000; j++) {
+      console.log("0");
+    }
     result *= i;
   }
   return result;
